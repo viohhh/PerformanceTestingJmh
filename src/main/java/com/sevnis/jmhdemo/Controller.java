@@ -7,11 +7,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class Controller {
 
-    @PostMapping("/equalignorecse")
+    @PostMapping("/equalignorecase")
     public String equalIgnoreCase(@RequestBody RequestData requestData) {
         for (int i = 0; i < requestData.getData().size(); i++) {
             if (requestData.getData().get(i).equalsIgnoreCase("string500")) {
                 break;
+            }
+        }
+        return "OK";
+    }
+
+    @PostMapping("/equalonlyexception")
+    public String equalOnlyException(@RequestBody RequestData requestData) throws Exception {
+        for (int i = 0; i < requestData.getData().size(); i++) {
+            if (requestData.getData().get(i).equals("string500")) {
+                throw new Exception("not ok");
             }
         }
 
@@ -19,7 +29,6 @@ public class Controller {
     }
 
     @PostMapping("/equalonly")
-
     public String equalOnly(@RequestBody RequestData requestData) {
         for (int i = 0; i < requestData.getData().size(); i++) {
             if (requestData.getData().get(i).equals("string500")) {

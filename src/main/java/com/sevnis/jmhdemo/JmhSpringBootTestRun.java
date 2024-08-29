@@ -11,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MockMvcBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -46,7 +47,7 @@ public class JmhSpringBootTestRun {
         mockMvc = MockMvcBuilders.webAppContextSetup((WebApplicationContext) ctx).build();
 
         List data = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 1000; i ++) {
             data.add("string" + i);
         }
 
@@ -61,8 +62,17 @@ public class JmhSpringBootTestRun {
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
     public void benchmarkEqualIgnoreCase() throws Exception {
-
         mockMvc.perform(post("/equalignorecase")
+                .content(dataStr)
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk());
+
+    }
+
+    @Benchmark
+    @BenchmarkMode(Mode.Throughput)
+    public void benchmarkEqualNotIgnoreCase() throws Exception {
+        mockMvc.perform(post("/equalonly")
                         .content(dataStr)
                         .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk());
@@ -70,13 +80,11 @@ public class JmhSpringBootTestRun {
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public void benchmarkEqualNotIgnoreCase() throws Exception {
-
-        mockMvc.perform(post("/equalonly")
+    public void benchmarkEqualNotIgnoreExceptionCase() throws Exception {
+        mockMvc.perform(post("/equalonlyexception")
                         .content(dataStr)
                         .contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk());
+                .andExpect(status().isInternalServerError());
     }
+
 }
-
-
